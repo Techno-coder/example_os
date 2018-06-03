@@ -1,0 +1,4 @@
+ata0-slave: type=cdrom, path=cmake-build-debug/x86_64-example_os.iso, status=inserted
+cpu: ips=100000000
+boot: cdrom
+magic_break: enabled=1
