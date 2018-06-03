@@ -5,6 +5,9 @@ use super::VirtualAddress;
 // This makes it easy to see which areas of memory are already used for
 // some function
 
+// Note well: The first sixteen bits of a virtual address must match
+// the 17th bit (from the left) due to the intel memory hole.
+// Otherwise, accessing the address will cause a General Protection Fault
 pub const TEMPORARY_PAGE: VirtualAddress = VirtualAddress::new(0xffff_f000_0000_1000);
 pub const ACTIVE_TABLE_WITH_TEMPORARY_PAGE: VirtualAddress = TEMPORARY_PAGE.offset(0x1000);
 pub const CLONE_SHALLOW_TEMPORARY_PAGE: VirtualAddress = ACTIVE_TABLE_WITH_TEMPORARY_PAGE.offset(0x1000);

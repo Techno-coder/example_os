@@ -40,6 +40,8 @@ fn enable_cpu_features() {
 }
 
 fn enable_nxe_bit() {
+	// Allows NO_EXECUTE to be marked on pages
+
 	use x86_64::registers::msr::{IA32_EFER, rdmsr, wrmsr};
 	const NXE_BIT: u64 = 1 << 11;
 	unsafe {

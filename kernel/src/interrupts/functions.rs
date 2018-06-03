@@ -10,6 +10,8 @@ static GDT: Once<super::Gdt> = Once::new();
 static IDT: Once<Idt> = Once::new();
 pub static TSS: Global<TaskStateSegment> = Global::new("TASK_STATE_SEGMENT");
 
+// These user selectors are used when creating an initial
+// user mode stack. See task/loaders/stack::create_initial_stack
 pub static USER_CODE_SELECTOR: Once<u16> = Once::new();
 pub static USER_DATA_SELECTOR: Once<u16> = Once::new();
 
@@ -26,6 +28,9 @@ const GENERAL_FAULT_STACK_INDEX: usize = 3;
 
 const TIMER_INTERRUPT_INDEX: usize = 0;
 const KEYBOARD_INTERRUPT_INDEX: usize = 1;
+
+// We have shifted the interrupt vectors up 32 so the actual
+// index in the interrupt table is 0xaa - 32
 const SYSTEM_CALL_INDEX: usize = 0xaa - super::pic_functions::PIC_ONE_VECTOR_BASE as usize;
 
 pub fn initialize() {
@@ -56,6 +61,8 @@ fn initialize_global_descriptor_table() {
 
 	let gdt = GDT.call_once(|| {
 		let mut gdt = super::Gdt::new();
+		// Descriptors are needed for both kernel mode
+		// and user mode. See GdtDescriptor
 		kernel_code_selector = gdt.add_kernel_entry(GdtDescriptor::kernel_code_segment());
 		kernel_data_selector = gdt.add_kernel_entry(GdtDescriptor::kernel_data_segment());
 		user_code_selector = gdt.add_user_entry(GdtDescriptor::user_code_segment());
@@ -120,7 +127,13 @@ unsafe fn set_interrupt_handlers(table: &mut Idt) {
 	//
 	// int 0xaa
 	//
-	// without causing a General Protection Fault
+	// without causing a General Protection Fault.
+	//
+	// A distinction between an "interrupt" and a "trap" should be
+	// made here. Traps are almost exactly the same as interrupts
+	// but they allow interrupts to occur while their handler is
+	// executing. In this case, the system call handler would be
+	// considered a trap.
 	table.interrupts[SYSTEM_CALL_INDEX]
 		.set_handler_fn(system_call_handler)
 		.disable_interrupts(false)

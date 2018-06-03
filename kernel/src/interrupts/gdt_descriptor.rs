@@ -1,5 +1,12 @@
 use x86_64::structures::tss::TaskStateSegment;
 
+// GDT descriptors describe linear regions of memory and
+// the rules that govern them. In long mode, descriptors
+// are rarely used anymore but they are still required
+// (due to paging replacing segmentation). Instead of
+// governing a region of memory, we just have them govern
+// the entire address space.
+
 pub enum GdtDescriptor {
 	UserSegment(u64),
 	SystemSegment(u64, u64),
