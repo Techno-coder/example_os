@@ -41,6 +41,8 @@ pub const KERNEL_BASE: u64 = 0xffff_ff00_0000_0000;
 
 #[no_mangle]
 pub extern "C" fn boot_entry(boot_information: usize) -> ! {
+	//  This function is called after jumping from start64_2 in boot_entry.asm
+
 	let boot_structure = ::utility::MultibootStructure::new(boot_information as usize);
 	let boot_information = boot_structure.get();
 	::display::text_mode::functions::initialize();

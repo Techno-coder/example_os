@@ -10,6 +10,10 @@ section .boot_entry
 bits 32
 setup_page_tables:
     ; map first and 510th PML4 entries to PDP table
+    ;
+    ; We want the 510th mapped because our higher
+    ; half kernel's address is located in the
+    ; 510th P3 page table
     mov eax, pdp_table - KERNEL_BASE
     or eax, 0b11    ; present + writable
     mov [pml4_table - KERNEL_BASE], eax
@@ -66,6 +70,9 @@ pd_table:
     resb 4096
 page_table:
     resb 4096
+; We put the stack below the page tables
+; to later create a guard page that protects
+; us from stack overflows
 boot_stack_bottom:
     resb 16 * 4096
 boot_stack_top:
