@@ -3,6 +3,7 @@ ENTRY(start)
 KERNEL_BASE = 0xFFFFFF0000000000;
 
 SECTIONS {
+	# Set the current address to the lower half
     . = 1M;
 
     .boot_header :
@@ -16,6 +17,8 @@ SECTIONS {
         . = ALIGN(4K);
     }
 
+	# All sections after this have addresses
+	# in the higher half
     . += KERNEL_BASE;
 
 	.rodata : AT(ADDR(.rodata) - KERNEL_BASE) {
