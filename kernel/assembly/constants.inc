@@ -1,0 +1,4 @@
+%ifndef CONSTANTS
+%define CONSTANTS
+	%define KERNEL_BASE 0xFFFFFF0000000000
+%endif

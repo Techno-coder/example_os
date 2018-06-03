@@ -1,0 +1,16 @@
+[package]
+name = "kernel"
+version = "0.1.0"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+rlibc = "*"
+multiboot2 = "*"
+x86_64 = "*"
+spin = "*"
+rustc-demangle = "*"
+bitflags = "*"
+bit_field = "*"
+linked_list_allocator = "*"

@@ -1,0 +1,11 @@
+Cargo.lock
+.idea/codeStyles/
+.idea/dictionaries/
+.idea/misc.xml
+.idea/modules.xml
+.idea/example_os.iml
+.idea/workspace.xml
+cmake-build-debug/
+cmake-build-release/
+kernel/target/
+.idea/inspectionProfiles/

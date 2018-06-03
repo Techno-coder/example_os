@@ -1,0 +1,4 @@
+Amazing, I'm a text file!
+If you're reading this, it means module loading
+is working perfectly. Thank you and have a
+nice day!
