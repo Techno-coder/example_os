@@ -15,6 +15,8 @@ pub struct BootAllocator {
 	huge_frame_allocator: HugeBootBumpAllocator,
 }
 
+// For information on the design of these allocators,
+// see the mod.rs in memory/generic_allocators
 impl BootAllocator {
 	pub fn new(boot_structure: ::utility::MultibootStructure) -> BootAllocator {
 		let mut huge_frame_allocator = HugeBootBumpAllocator::new(boot_structure);

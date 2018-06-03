@@ -13,6 +13,9 @@ pub static TSS: Global<TaskStateSegment> = Global::new("TASK_STATE_SEGMENT");
 pub static USER_CODE_SELECTOR: Once<u16> = Once::new();
 pub static USER_DATA_SELECTOR: Once<u16> = Once::new();
 
+// These stacks must be marked as mutable so they are placed
+// in the .bss segment. Otherwise, it would cause a page fault
+// because it would be in the .rodata section.
 static mut DOUBLE_FAULT_STACK: FixedStack = FixedStack::new();
 static mut PAGE_FAULT_STACK: FixedStack = FixedStack::new();
 static mut GENERAL_FAULT_STACK: FixedStack = FixedStack::new();
@@ -36,6 +39,9 @@ pub fn post_initialize() {
 	let _status = ::display::text_mode::BootStatus::new("Enabling interrupts");
 	super::pic_functions::initialize();
 	super::pit_functions::initialize();
+
+	// Enabling interrupts allows timer interrupts to be
+	// fired and handled.
 	unsafe { ::x86_64::instructions::interrupts::enable(); }
 }
 
@@ -73,6 +79,9 @@ fn initialize_task_state_segment() {
 	use x86_64::VirtualAddress;
 	let mut tss = TaskStateSegment::new();
 	unsafe {
+		// The TaskStateSegment can store up to seven stacks
+		// These stacks are switched to when interrupts handlers
+		// are called
 		tss.interrupt_stack_table[DOUBLE_FAULT_STACK_INDEX] = VirtualAddress(DOUBLE_FAULT_STACK.address());
 		tss.interrupt_stack_table[PAGE_FAULT_STACK_INDEX] = VirtualAddress(PAGE_FAULT_STACK.address());
 		tss.interrupt_stack_table[GENERAL_FAULT_STACK_INDEX] = VirtualAddress(GENERAL_FAULT_STACK.address());
@@ -89,6 +98,10 @@ fn initialize_interrupt_table() {
 unsafe fn set_interrupt_handlers(table: &mut Idt) {
 	use super::handlers::*;
 	use x86_64::PrivilegeLevel;
+
+	// Note: By default, interrupts are automatically disabled
+	// by the processor when a interrupt handler is called
+	// and enabled when the handler returns
 	table.divide_by_zero.set_handler_fn(zero_divide_handler);
 	table.double_fault.set_handler_fn(double_fault_handler)
 	     .set_stack_index(DOUBLE_FAULT_STACK_INDEX as u16);
@@ -100,6 +113,14 @@ unsafe fn set_interrupt_handlers(table: &mut Idt) {
 	table.invalid_opcode.set_handler_fn(invalid_opcode_handler);
 	table.interrupts[TIMER_INTERRUPT_INDEX].set_handler_fn(timer_handler);
 	table.interrupts[KEYBOARD_INTERRUPT_INDEX].set_handler_fn(keyboard_handler);
+
+	// We allow interrupts so the scheduler can preempt a system call
+	// We need the privilege level to be Ring3 so user mode
+	// threads can use
+	//
+	// int 0xaa
+	//
+	// without causing a General Protection Fault
 	table.interrupts[SYSTEM_CALL_INDEX]
 		.set_handler_fn(system_call_handler)
 		.disable_interrupts(false)

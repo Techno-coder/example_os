@@ -20,6 +20,8 @@ pub fn map_data(data: &[u8], table: &mut InactivePageTable, offset: VirtualAddre
 	write_data(data, table, offset);
 }
 
+/// Maps a region of the inactive page table's virtual address space
+/// into physical memory
 pub fn allocate_region(region: PageIter<Page>, table: &mut InactivePageTable, flags: EntryFlags) {
 	let mut allocator = FRAME_ALLOCATOR.lock();
 	let allocator = allocator.deref_mut();
@@ -31,6 +33,8 @@ pub fn allocate_region(region: PageIter<Page>, table: &mut InactivePageTable, fl
 	}
 }
 
+/// Writes an array of bytes at a virtual address in the inactive table's
+/// virtual address space
 pub fn write_data(data: &[u8], table: &mut InactivePageTable, offset: VirtualAddress) {
 	let staging_page = Page::from_address(::paging::reserved::TEMPORARY_PAGE);
 	let mut active_table = ACTIVE_PAGE_TABLE.lock();

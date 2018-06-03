@@ -3,9 +3,10 @@ use paging::Page;
 use paging::PageLike;
 use paging::VirtualAddress;
 
+// The compiler adds different numbers to the rsp
+// depending on the build mode
 #[cfg(debug_assertions)]
 pub const PADDING_COUNT: usize = 16;
-
 #[cfg(not(debug_assertions))]
 pub const PADDING_COUNT: usize = 15;
 
@@ -16,6 +17,13 @@ pub const STACK_SIZE: u64 = 16 * Page::SIZE;
 
 pub fn create_initial_stack(entry_point: &VirtualAddress, stack_pointer: &VirtualAddress)
                             -> [u64; INITIAL_STACK_SIZE] {
+	// Here we setup a fake stack. When the scheduler gets to this
+	// thread stack, it will pop all the registers and then iret.
+	// We pretend that the thread just got interrupted and then
+	// when the processor irets we will be placed into user mode
+	// See the intel documentation on the exception stack frame
+
+	// Interrupt Enable Flag, Reserved
 	const R_FLAGS: u64 = 0b10_0000_0010;
 	let mut stack = [0; INITIAL_STACK_SIZE];
 	stack[PADDING_COUNT] = entry_point.raw() as u64;
@@ -32,6 +40,8 @@ pub fn create_local_stack(stack_bottom: VirtualAddress, table: &mut InactivePage
 	use paging::EntryFlags;
 	assert_eq!(stack_bottom.raw() as u64 % STACK_SIZE, 0);
 
+	// Every thread needs a kernel stack, for use during
+	// interrupt handling
 	let kernel_stack_top = stack_bottom.offset(STACK_SIZE as usize - 1);
 	let kernel_stack_page = Page::from_address(kernel_stack_top.clone());
 	super::functions::allocate_region(PageIter::inclusive(kernel_stack_page.clone(), kernel_stack_page.clone()),

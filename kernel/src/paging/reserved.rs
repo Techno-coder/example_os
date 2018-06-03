@@ -1,6 +1,10 @@
 use super::PageLike;
 use super::VirtualAddress;
 
+// This files collates all the special addresses that are used in the kernel
+// This makes it easy to see which areas of memory are already used for
+// some function
+
 pub const TEMPORARY_PAGE: VirtualAddress = VirtualAddress::new(0xffff_f000_0000_1000);
 pub const ACTIVE_TABLE_WITH_TEMPORARY_PAGE: VirtualAddress = TEMPORARY_PAGE.offset(0x1000);
 pub const CLONE_SHALLOW_TEMPORARY_PAGE: VirtualAddress = ACTIVE_TABLE_WITH_TEMPORARY_PAGE.offset(0x1000);

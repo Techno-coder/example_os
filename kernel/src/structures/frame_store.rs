@@ -9,6 +9,11 @@ use paging::PageLike;
 
 pub const MAX_FRAMES: usize = 255;
 
+// This structure has been created for the
+// express purpose of not using heap allocation
+// to store the frames. Using it causes a deadlock
+// due to the way heap allocation // works in
+// the kernel. See memory/functions::handle_heap_fault
 pub struct FrameStore<F: FrameLike> {
 	pages: PageIter<Page>,
 	top: NonNull<FrameStoreNode<F>>,

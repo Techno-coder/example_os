@@ -1,3 +1,4 @@
+// Only use of this is in the shell's memory tester
 pub struct PseudoRandomGenerator {
 	next: u64,
 }

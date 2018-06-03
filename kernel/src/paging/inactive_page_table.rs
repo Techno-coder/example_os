@@ -33,9 +33,11 @@ impl InactivePageTable {
 		use super::PageTable;
 		use super::table_level::Level4;
 
+		// We use a temporary page to access this inactive table's page table root
 		let original_page = Page::from_address(super::reserved::CLONE_SHALLOW_TEMPORARY_PAGE);
 		page_mapper.map_to(original_page.clone(), self.table_root.clone(), EntryFlags::empty(), allocator);
 
+		// We allocate a frame to store the cloned page table root
 		let table_frame = allocator.allocate().expect("Out of memory: PAGE_TABLE_SHALLOW_CLONE");
 		let clone_page = Page::from_address(super::reserved::TEMPORARY_PAGE);
 		page_mapper.map_to(clone_page.clone(), table_frame.clone(), EntryFlags::WRITABLE, allocator);
@@ -46,9 +48,12 @@ impl InactivePageTable {
 			::core::ptr::copy(original_table, clone_table, 1);
 		}
 
+		// We need to remap the recursive mapping as it still points
+		// to the same frame as the original table.
 		let table = unsafe { super::functions::as_table_root(clone_page.clone()) };
 		table[511].set(table_frame.clone(), EntryFlags::PRESENT | EntryFlags::WRITABLE);
 
+		// The temporary page mappings are no longer needed
 		page_mapper.discard(original_page, allocator);
 		page_mapper.discard(clone_page, allocator);
 		unsafe { InactivePageTable::new_mapped(table_frame) }

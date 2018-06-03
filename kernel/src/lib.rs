@@ -46,22 +46,42 @@ pub extern "C" fn boot_entry(boot_information: usize) -> ! {
 	let boot_structure = ::utility::MultibootStructure::new(boot_information as usize);
 	let boot_information = boot_structure.get();
 	::display::text_mode::functions::initialize();
+
+	// Enabling interrupts early on allows us to catch
+	// fatal exceptions such as General Protection Faults.
 	::interrupts::functions::initialize();
 
 	let mut boot_allocator = ::memory::functions::initialize(boot_structure.clone());
+
+	// The base_table is used for creating threads that run in user mode
+	// It contains mappings for the kernel
 	let base_table = ::paging::functions::initialize(&boot_information, &mut boot_allocator);
 	::memory::functions::post_paging_initialize(boot_allocator);
 	::graph::functions::load_boot_disk(&boot_information);
 	::debug::symbols::load_kernel_symbols();
+
+	// Converts the BootAllocator into a PostBootAllocator
+	// that supports unlimited deallocation of frames
 	::memory::functions::post_initialize(&boot_information);
 
+	// Prepare the scheduler for when interrupts are enabled
+	// See task/mod.rs for loading a user mode program
 	::task::functions::pre_initialize();
 	::task::functions::initialize();
+
+	// Note: not actually used because the keyboard interrupt
+	// is disabled
 	::shell::functions::initialize();
+
+	// Enables interrupts, especially the timer interrupt
 	::interrupts::functions::post_initialize();
 
 	println!("Kernel boot successful");
 	println!("Press any key to launch the kernel shell");
+
+	// We must use a loop here because non maskable interrupts
+	// will cause the halt instruction to be skipped and then
+	// the processor executes random memory
 	loop { unsafe { ::x86_64::instructions::halt(); } }
 }
 

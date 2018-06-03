@@ -23,6 +23,9 @@ impl MemoryDisk {
 		}
 	}
 
+	// The boot disk data is in the format of a tar archive
+	// The tar archive uses a file system called USTAR
+	// See https://wiki.osdev.org/USTAR
 	pub fn parse_archive(archive_data: &[u8]) -> Option<MemoryDisk> {
 		let mut memory_disk = Self::new();
 
@@ -36,6 +39,7 @@ impl MemoryDisk {
 			let location = Location::parse(&file_path[2..]);
 			Self::add_file(&mut memory_disk, &location.as_slice(), data);
 
+			// Align up because the file may not be a multiple of 512 bytes
 			cursor = ::utility::math::align_up_usize(new_cursor, Self::SECTOR_SIZE);
 		}
 

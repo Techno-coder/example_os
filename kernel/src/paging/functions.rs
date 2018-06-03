@@ -54,6 +54,11 @@ fn enable_write_protect_bit() {
 }
 
 fn enable_global_pages_bit() {
+	// Global pages aren't actually used anywhere,
+	// but they can be used for marking kernel pages
+	// to prevent those entries from being flushed
+	// on context switches
+
 	use x86_64::registers::control_regs::{cr4, cr4_write, Cr4};
 	unsafe { cr4_write(cr4() | Cr4::ENABLE_GLOBAL_PAGES) };
 }
@@ -67,6 +72,8 @@ fn remap_kernel<A>(boot_information: &BootInformation, allocator: &mut A) -> Ina
 		InactivePageTable::new_cleared(frame, &mut active_table, allocator)
 	};
 
+	// We do not map the multiboot sections here because they are
+	// not usable once we finish booting
 	active_table.with(&mut remap_table, allocator, |mapper, allocator| {
 		remap_vga_buffer(mapper, allocator);
 		remap_kernel_sections(boot_information, mapper, allocator);
@@ -78,6 +85,7 @@ fn remap_kernel<A>(boot_information: &BootInformation, allocator: &mut A) -> Ina
 		remap_multiboot(boot_information, mapper, allocator);
 	});
 
+	// We switch to the newly created page table
 	let old_table = active_table.switch(remap_table);
 	create_guard_page(old_table, &mut active_table, allocator);
 	base_table
@@ -87,6 +95,10 @@ fn create_guard_page<A>(old_table: InactivePageTable, mapper: &mut PageMapper, a
 	where A: FrameLikeAllocator<Frame> {
 	let old_table_raw_address = old_table.table_root().start_address().raw();
 	let old_table_address = VirtualAddress::new_adjusted(old_table_raw_address as usize);
+
+	// The old page table is directly located below our kernel stack
+	// Thus, if we un map the old page table, if we overflow our
+	// stack, a page fault will occur.
 	let guard_page = Page::from_address(old_table_address);
 	let frame = mapper.un_map(guard_page, allocator);
 	allocator.deallocate(frame);
@@ -95,6 +107,7 @@ fn create_guard_page<A>(old_table: InactivePageTable, mapper: &mut PageMapper, a
 fn remap_kernel_sections(boot_info: &BootInformation, mapper: &mut PageMapper, allocator: &mut FrameLikeAllocator<Frame>) {
 	let elf_sections = boot_info.elf_sections_tag().unwrap();
 	for section in elf_sections.sections() {
+		// If the section isn't allocated, then it doesn't exist in memory
 		if !section.is_allocated() {
 			continue;
 		}
@@ -112,8 +125,12 @@ fn remap_kernel_sections(boot_info: &BootInformation, mapper: &mut PageMapper, a
 }
 
 fn remap_vga_buffer(mapper: &mut PageMapper, allocator: &mut FrameLikeAllocator<Frame>) {
-	let vga_buffer_frame = Frame::from_address(PhysicalAddress::new(0xb8000));
+	// We access the VGA buffer using a higher half kernel page
 	let vga_buffer_page = Page::from_address(VirtualAddress::new_adjusted(0xb8000));
+
+	// However, the actual VGA buffer is still located in the lower half
+	// of physical memory
+	let vga_buffer_frame = Frame::from_address(PhysicalAddress::new(0xb8000));
 	mapper.map_to(vga_buffer_page, vga_buffer_frame, EntryFlags::WRITABLE, allocator);
 }
 
@@ -126,6 +143,9 @@ fn remap_multiboot(boot_info: &BootInformation, mapper: &mut PageMapper, allocat
 	}
 }
 
+// Addresses from 0xF000_0000_0000 upwards are dedicated to the kernel,
+// so we must ensure that the page directories for those addresses
+// exist so we can clone the entire page table safely
 fn prepare_kernel_page_directories(mapper: &mut PageMapper, allocator: &mut FrameLikeAllocator<Frame>) {
 	for index in 480..510 {
 		mapper.table_mut().create_if_nonexistent(index, allocator);

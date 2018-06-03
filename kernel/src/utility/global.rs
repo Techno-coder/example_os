@@ -36,6 +36,8 @@ impl<T> Global<T> {
 	#[cfg(debug_assertions)]
 	pub fn lock(&self) -> GlobalGuard<T> {
 		GlobalGuard {
+			// Our kernel runs on one CPU so any contention results
+			// in a dead lock (until the scheduler has been created)
 			guard: match self.object.try_lock() {
 				Some(guard) => {
 					if guard.is_none() { panic!("Global not initialized: {}", self.identifier); }

@@ -1,6 +1,8 @@
 use display::text_mode::*;
 use display::text_mode::functions::SYSTEM_DISPLAY;
 
+// This structure allows multiple printers to use
+// the same display driver
 pub struct GlobalFacade;
 
 impl TextDisplay for GlobalFacade {
