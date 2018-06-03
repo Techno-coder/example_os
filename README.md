@@ -5,14 +5,14 @@ This OS is a hard fork of my private OS that I'm also working on.
 Huge thanks to [Phill-opp](https://os.phil-opp.com) and the [OSDev wiki](https://wiki.osdev.org)
 
 ## Features
-Preemptive Multitasking (including system calls)
-System Calls (well, one of them)
-Primitive filesystem (Tar archive ram disk)
-Stack traces (with kernel symbols)
-Huge page support
-Huge frame allocation
-Keyboard driver
-Kernel shell (with tab completion)
+- Preemptive Multitasking (including system calls)
+- System Calls (well, one of them)
+- Primitive filesystem (Tar archive ram disk)
+- Stack traces (with kernel symbols)
+- Huge page support
+- Huge frame allocation
+- Keyboard driver
+- Kernel shell (with tab completion)
 
 ## Prerequisites
 You can find most of the prerequisites needed in the `CMakeLists.txt` files located in the root and in `kernel` folder.
