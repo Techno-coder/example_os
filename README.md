@@ -1,7 +1,7 @@
 # example_os
-A heavily commented OS in Rust for learning purposes (In progress)
+A heavily commented OS in Rust for reference purposes (documentation in progress).
 
-This OS is a hard fork of my private OS that I'm also working on.  
+This OS is a hard fork of my private OS that I'm also working on. No more features will be added to this OS as it is for reference purposes only.  
 Huge thanks to [Phill-opp](https://os.phil-opp.com) and the [OSDev wiki](https://wiki.osdev.org)
 
 ## Features
