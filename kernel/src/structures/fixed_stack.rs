@@ -16,6 +16,8 @@ impl FixedStack {
 	}
 
 	pub fn address(&mut self) -> usize {
+		// Stacks grow downward so it starts at the end of the
+		// array instead of the start
 		(&mut self.stack[Page::SIZE as usize - 1] as *mut _) as _
 	}
 }

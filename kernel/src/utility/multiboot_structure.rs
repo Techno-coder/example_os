@@ -1,5 +1,9 @@
 use multiboot2::BootInformation;
 
+// This structure is needed as multiboot2's ModuleIter cannot be cloned.
+// See memory/huge_frame_allocators/huge_boot_bump_allocator for its
+// main usage
+
 #[derive(Debug, Clone)]
 pub struct MultibootStructure {
 	address: usize,

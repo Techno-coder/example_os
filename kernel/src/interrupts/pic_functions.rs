@@ -34,6 +34,9 @@ unsafe fn remap_pic() {
 }
 
 unsafe fn mask_pic() {
+	// A bit is 0 when we want that interrupt to be
+	// enabled. In this case, we enable the timer interrupt
+	// only, for scheduling.
 	outb(PIC_ONE_DATA_PORT, 0b1111_1110);
 	outb(PIC_TWO_DATA_PORT, 0b1111_1111);
 }

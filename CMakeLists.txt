@@ -11,7 +11,6 @@ set(GRUB_CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/grub.cfg)
 set(GRUB_BOOT_TOOL /usr/local/bin/grub-mkrescue)
 
 set(TAR_TOOL tar)
-set(METADATA_TOOL mat)
 set(BOOT_DISK_ARCHIVE ${ISO_FILES_DIR}/boot/boot_disk.tar)
 set(BOOT_DISK ${CMAKE_CURRENT_SOURCE_DIR}/boot_disk)
 

@@ -11,4 +11,9 @@ pub mod frame_recycler;
 pub mod fixed_frame_recycler;
 pub mod post_boot_allocator;
 
+// The BootAllocator and PostBootAllocator work in two stages:
+// If there are no frames available, a huge frame is allocated
+// and then split into 512 frames. This allows for easy allocation
+// of both huge frames and regular frames.
+
 pub trait GenericAllocator: FrameLikeAllocator<super::Frame> + FrameLikeAllocator<super::HugeFrame> {}

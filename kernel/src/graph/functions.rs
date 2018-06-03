@@ -34,6 +34,8 @@ pub fn load_boot_disk(boot_information: &::multiboot2::BootInformation) {
 	ROOT_PROVIDER.lock().mount(Identifier::new("boot_disk"), box boot_disk);
 }
 
+// Copies the module data into a heap allocated Vec so it
+// still exists once the kernel finishes booting
 pub fn load_module(module: &::multiboot2::ModuleTag) -> Vec<u8> {
 	use memory::FRAME_ALLOCATOR;
 	use memory::PhysicalAddress;
@@ -45,6 +47,7 @@ pub fn load_module(module: &::multiboot2::ModuleTag) -> Vec<u8> {
 	use paging::ACTIVE_PAGE_TABLE;
 	use core::ops::DerefMut;
 
+	// We use huge frames here because the boot disk can get really large
 	let start = HugeFrame::from_address(PhysicalAddress::new(module.start_address() as u64));
 	let end = HugeFrame::from_address(PhysicalAddress::new(module.end_address() as u64));
 	let page = HugePage::from_address(::paging::reserved::HUGE_TEMPORARY_PAGE);
@@ -54,12 +57,17 @@ pub fn load_module(module: &::multiboot2::ModuleTag) -> Vec<u8> {
 		let mut current = frame.start_address().raw().max(module.start_address() as u64);
 		let end = frame.end_address().raw().min(module.end_address() as u64);
 
+		// Temporarily map the module data frame into a page
 		ACTIVE_PAGE_TABLE.lock().map_to(page.clone(), frame, EntryFlags::empty(), FRAME_ALLOCATOR.lock().deref_mut());
+
+		// Copy the data via the temporary page
 		while current <= end {
 			let byte = ((current % HugePage::SIZE) + page.start_address().raw() as u64) as *const u8;
 			data.push(unsafe { *byte });
 			current += 1;
 		}
+
+		// Un map the page so we can use it again in the next iteration
 		ACTIVE_PAGE_TABLE.lock().discard(page.clone(), FRAME_ALLOCATOR.lock().deref_mut());
 	}
 	data

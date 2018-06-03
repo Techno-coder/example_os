@@ -1,6 +1,7 @@
 use memory::FrameLike;
 use super::FrameLikeAllocator;
 
+// The amount of frames that can be deallocated
 macro_rules! amount {
     () => { 16 };
 }
@@ -9,6 +10,7 @@ pub const MAX_FRAMES: usize = amount!();
 
 type Frames<F> = [Option<F>; MAX_FRAMES];
 
+// This is an example of the Decorator pattern
 pub struct FixedFrameRecycler<F, A> where F: FrameLike, A: FrameLikeAllocator<F> {
 	allocator: A,
 	free_frames: Frames<F>,
