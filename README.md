@@ -4,6 +4,16 @@ A heavily commented OS in Rust for learning purposes (In progress)
 This OS is a hard fork of my private OS that I'm also working on.  
 Huge thanks to [Phill-opp](https://os.phil-opp.com) and the [OSDev wiki](https://wiki.osdev.org)
 
+## Features
+- Preemptive Multitasking (including system calls)
+- System Calls (well, one of them)
+- Primitive filesystem (Tar archive ram disk)
+- Stack traces (with kernel symbols)
+- Huge page support
+- Huge frame allocation
+- Keyboard driver
+- Kernel shell (with tab completion)
+
 ## Prerequisites
 You can find most of the prerequisites needed in the `CMakeLists.txt` files located in the root and in `kernel` folder.
 
@@ -43,7 +53,7 @@ Import the project and then build the `.iso` target after making the changes in 
 1. Use NASM to compile all the files in `kernel/assembly` with the command  
 `nasm -felf64 -w-number-overflow -Ikernel/assembly`  
 2. Use Xargo to compile the Rust binary with the command (execute in the `kernel` folder)  
-``RUST_FLAGS=-Cforce-frame-pointers=yes RUST_TARGET_PATH=`pwd` xargo build --target x86_64-example_os.json``  
+``RUST_FLAGS=-Cforce-frame-pointers=yes RUST_TARGET_PATH=`pwd` xargo build --target x86_64-example_os``  
 The `RUST_TARGET_PATH` is needed to allow xargo to locate the target specification.
 3. Link all the files together  
 `ld.lld --gc-sections -Tlinker.ld <Assembly object files> <Generated Rust file>`  
