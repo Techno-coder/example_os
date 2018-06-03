@@ -41,6 +41,10 @@ impl<L> PageTable<L> where L: super::HierarchicalLevel {
 	pub fn create_if_nonexistent(&mut self, index: usize, allocator: &mut FrameLikeAllocator<Frame>) -> &mut PageTable<L::NextLevel> {
 		if self.next_table_mut(index).is_none() {
 			let table_frame = allocator.allocate().expect("Out of memory: PageTable entry");
+
+			// The flags must be USER_ACCESSIBLE because all the page directories
+			// have to be USER_ACCESSIBLE for a user mode thread to access
+			// a USER_ACCESSIBLE page
 			let flags = EntryFlags::PRESENT | EntryFlags::WRITABLE | EntryFlags::USER_ACCESSIBLE;
 			self.entries[index].set(table_frame, flags);
 			self.next_table_mut(index).unwrap().clear()

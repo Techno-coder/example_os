@@ -17,6 +17,14 @@ pub fn initialize() {
 }
 
 unsafe fn remap_pic() {
+	// Remapping the PIC is very important because by default
+	// the interrupt vectors are mapped to 0 - 31. However,
+	// interrupts at these vectors overlap the exception vectors
+	// that the processor uses. That means, when the timer
+	// interrupt is fired, the processor detects this as a
+	// Coprocessor Segment Overrun exception. To fix this,
+	// we remap the interrupt vectors above 31.
+
 	use x86_64::instructions::port::outb;
 	const PIC_RESTART_COMMAND: u8 = 0x11;
 
@@ -42,6 +50,10 @@ unsafe fn mask_pic() {
 }
 
 pub fn send_interrupt_end(both_chips: bool) {
+	// Some interrupts require you to send an "interrupt end" signal
+	// to signal that you have finished servicing the interrupt.
+	// If this is not done, no more interrupts will fire
+
 	unsafe {
 		if both_chips {
 			outb(PIC_TWO_COMMAND_PORT, 0x20);

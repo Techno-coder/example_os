@@ -23,6 +23,7 @@ impl VgaTextDriver {
 	pub unsafe fn new() -> VgaTextDriver {
 		VgaTextDriver::enable_cursor();
 		VgaTextDriver {
+			// The buffer page is located in the higher half
 			buffer: &mut *((0xb8000 + ::KERNEL_BASE) as *mut Buffer),
 		}
 	}

@@ -32,7 +32,7 @@ pub fn post_initialize(boot_information: &::multiboot2::BootInformation) {
 	// We must be careful to not do any heap allocation when
 	// converting the BootAllocator. Heap allocation requires
 	// access to the BootAllocator but to convert it, we have
-	// to lock it. This means if we heap allocate then it will
+	// to lock it. This means if we heap allocate, it will
 	// cause a deadlock. See structures/frame_store
 	let mut free_areas = ::alloc::Vec::new();
 	for area in boot_information.memory_map_tag().unwrap().memory_areas() {

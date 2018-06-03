@@ -6,6 +6,8 @@ use paging::VirtualAddress;
 use rustc_demangle::Demangle;
 use spin::Once;
 
+// Demangle stores a reference to a string so the
+// symbol table string has to have a static lifetime
 static TABLE_STRING: Once<String> = Once::new();
 pub static SYMBOL_TABLE: Once<BTreeMap<VirtualAddress, Demangle>> = Once::new();
 
@@ -62,8 +64,8 @@ pub fn parse_symbols(table_string: &str) -> BTreeMap<VirtualAddress, Demangle> {
 		}
 
 		// The first column contains the address of the symbol,
-		// but it is in a string form so we have to convert it
-		// to a hexadecimal number
+		// but it is in a hexadecimal string form so we have to
+		// convert it to a number
 		let address = usize::from_str_radix(segments[0], 16);
 		let address = if let Ok(address) = address {
 			VirtualAddress::new(address)

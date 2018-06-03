@@ -39,6 +39,8 @@ mod task;
 
 pub const KERNEL_BASE: u64 = 0xffff_ff00_0000_0000;
 
+// The return type is ! because we don't ever want to return
+// from the boot_entry
 #[no_mangle]
 pub extern "C" fn boot_entry(boot_information: usize) -> ! {
 	//  This function is called after jumping from start64_2 in boot_entry.asm
@@ -47,8 +49,8 @@ pub extern "C" fn boot_entry(boot_information: usize) -> ! {
 	let boot_information = boot_structure.get();
 	::display::text_mode::functions::initialize();
 
-	// Enabling interrupts early on allows us to catch
-	// fatal exceptions such as General Protection Faults.
+	// Creating an interrupt descriptor table early on allows us to
+	// catch fatal exceptions such as General Protection Faults.
 	::interrupts::functions::initialize();
 
 	let mut boot_allocator = ::memory::functions::initialize(boot_structure.clone());
