@@ -47,7 +47,7 @@ mov rbp, rsp
 ```
 This is what the stack looks like when a function is called:  
 
-<img src="assets/stack_trace/stack_on_call.png" style="width: 50%;">
+<img src="assets/stack_trace/stack_on_call.png" style="width: 600px;">
 
 From the diagram, we can see that the return address is always above the
 address stored in `rbp`. So, in order to find the last function's
