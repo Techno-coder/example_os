@@ -15,6 +15,9 @@ set(CMAKE_ASM_NASM_LINK_EXECUTABLE "ld.lld <LINK_FLAGS> -o <TARGET> <OBJECTS> <L
 set(XARGO_TOOL $ENV{HOME}/.cargo/bin/xargo-m)
 set(RUST_PROJECT ${PROJECT_NAME}.a)
 set(RUST_OUTPUT_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/target/${BUILD_TARGET})
+
+# force-frame-pointers=yes is needed to allow stack traces to work properly
+# See src/debug/stack_trace
 set(COMMAND_PREFIX RUST_TARGET_PATH=${CMAKE_CURRENT_SOURCE_DIR} RUSTFLAGS=-Cforce-frame-pointers=yes)
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(RUST_BUILD ${RUST_OUTPUT_PREFIX}/debug/lib${PROJECT_NAME}.a)

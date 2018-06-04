@@ -2,6 +2,9 @@ use super::GdtDescriptor;
 use x86_64::structures::gdt::SegmentSelector;
 
 pub struct Gdt {
+	// The GDT can have up to 8192 entries but since we don't
+	// use segmentation, we shouldn't need anymore than 64 bytes worth
+	// of entries
 	table: [u64; 8],
 	next_free_index: usize,
 }
@@ -10,6 +13,11 @@ impl Gdt {
 	pub const fn new() -> Gdt {
 		Gdt {
 			table: [0; 8],
+
+			// The first entry is called the Null Descriptor and it should be
+			// left zeroed. The processor General Protection Faults when
+			// the first entry of GDT is referenced, to protect against
+			// applications that accidentally use the null descriptor.
 			next_free_index: 1,
 		}
 	}

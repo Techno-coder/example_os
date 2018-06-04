@@ -61,7 +61,7 @@ bitflags! {
 impl EntryFlags {
 	pub fn kernel_elf_section(section: &::multiboot2::ElfSection) -> EntryFlags {
 		use multiboot2::ElfSectionFlags;
-		let mut flags = EntryFlags::GLOBAL;
+		let mut flags = EntryFlags::empty();
 
 		if section.flags().contains(ElfSectionFlags::ALLOCATED) {
 			flags |= Self::PRESENT;

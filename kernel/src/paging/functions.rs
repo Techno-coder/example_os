@@ -116,6 +116,10 @@ fn remap_kernel_sections(boot_info: &BootInformation, mapper: &mut PageMapper, a
 
 		let flags = EntryFlags::kernel_elf_section(&section);
 
+		// For this to work correctly, all kernel sections have to be aligned
+		// on a page boundary. To use a HugeFrame, all sections have to be
+		// aligned on a HugeFrame boundary. Since the kernel is so small,
+		// it is not worth using HugeFrames. See linker.ld
 		let start_frame = Frame::from_address(PhysicalAddress::new_adjusted(section.start_address()));
 		let end_frame = Frame::from_address(PhysicalAddress::new_adjusted(section.end_address() - 1));
 

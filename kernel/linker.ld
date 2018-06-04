@@ -2,6 +2,10 @@ ENTRY(start)
 
 KERNEL_BASE = 0xFFFFFF0000000000;
 
+# ALIGN(4K) is used everywhere to align all the kernel sections
+# on a page boundary. This is so we can remap the kernel and set
+# the appropriate flags for each section.
+# See paging/functions::remap_kernel_sections
 SECTIONS {
 	# Set the current address to the lower half
     . = 1M;
