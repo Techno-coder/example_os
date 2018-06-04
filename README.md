@@ -6,7 +6,7 @@ This OS is a hard fork of my private OS that I'm also working on. No more featur
 Huge thanks to [Phil-opp](https://os.phil-opp.com) and the [OSDev wiki](https://wiki.osdev.org)
 
 ## License
-Everything in this repository is under the MIT license, excluding the tutorials folder, (which contains data for the companion website) which is copyrighted. 
+Everything in this repository is under the MIT license, excluding the _posts and assets folder (which contains data for the companion website), which is copyrighted. 
 
 ## Features
 - Preemptive Multitasking (including system calls)

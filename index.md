@@ -1,9 +1,14 @@
 ---
 ---
-
 ## Tutorials 
-[A stack trace for your OS](/tutorials/stack_trace.md)  
-[Entering user mode in long mode](/tutorials/user_mode.md)
+<ul>
+{% for post in site.posts %}
+<a href="{{ post.url }}">{{ post.title }}</a>
+<br>
+{% endfor %}
+</ul>
+
+An Atom/RSS feed is available [here](https://techno-coder.github.io/example_os/feed.xml)
 
 ## About me
 [Github profile](https://github.com/Techno-coder)

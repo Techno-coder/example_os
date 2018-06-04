@@ -1,4 +1,6 @@
-# A stack trace for your OS
+---
+tags: stack-trace frame-pointer debugging
+---
 ## What?
 A stack trace displays the location of every function call, 
 leading up to when the stack trace itself is called. Essentially, it
@@ -47,7 +49,7 @@ mov rbp, rsp
 ```
 This is what the stack looks like when a function is called:  
 
-<img src="assets/stack_trace/stack_on_call.png" style="width: 600px;">
+<img src="/assets/stack_trace/stack_on_call.png" style="width: 600px;">
 
 From the diagram, we can see that the return address is always above the
 address stored in `rbp`. So, in order to find the last function's
