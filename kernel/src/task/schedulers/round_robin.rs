@@ -1,6 +1,10 @@
 use alloc::VecDeque;
 use super::Thread;
 
+// The simplest scheduler possible
+// The next thread is the thread pushed on earliest
+// New threads are pushed to the back of the queue
+
 pub struct RoundRobin {
 	threads: VecDeque<Thread>,
 }

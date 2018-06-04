@@ -37,6 +37,10 @@ pub fn pre_initialize() {
 }
 
 fn enable_cpu_features() {
+	// This enables usage of the "sysenter" instruction
+	// However, system calls in this kernel currently
+	// utilize the int 0xaa instruction instead
+
 	use x86_64::registers::msr::{IA32_EFER, rdmsr, wrmsr};
 	const SCE_BIT: u64 = 1;
 	unsafe {

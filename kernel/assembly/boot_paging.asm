@@ -70,7 +70,7 @@ pd_table:
     resb 4096
 page_table:
     resb 4096
-; We put the stack below the page tables
+; We put the stack above the page tables
 ; to later create a guard page that protects
 ; us from stack overflows
 boot_stack_bottom:

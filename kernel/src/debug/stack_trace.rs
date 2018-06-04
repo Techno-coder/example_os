@@ -3,7 +3,7 @@ use paging::VirtualAddress;
 use rustc_demangle::Demangle;
 
 pub extern fn stack_trace() {
-	// When force-frame-pointers is enabled, every function call
+	// When force-frame-pointers is enabled, every function
 	// has these instructions at the start:
 	//
 	// push rbp
