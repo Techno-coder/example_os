@@ -1,6 +1,6 @@
 # example_os
 A heavily commented OS in Rust for reference purposes (documentation in progress).  
-Check out the companion site here: [Tutorials](https://techno-coder.github.io/example_os/docs/)
+Check out the companion site here: [Tutorials](https://techno-coder.github.io/example_os/)
 
 This OS is a hard fork of my private OS that I'm also working on. No more features will be added to this OS as it is for reference purposes only.  
 Huge thanks to [Phil-opp](https://os.phil-opp.com) and the [OSDev wiki](https://wiki.osdev.org)
