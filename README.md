@@ -1,14 +1,12 @@
 # example_os
-A heavily commented OS in Rust for reference purposes (documentation in progress).
-Check out the site here: [Tutorials](https://techno-coder.github.io/example_os/)
+A heavily commented OS in Rust for reference purposes (documentation in progress).  
+Check out the companion site here: [Tutorials](https://techno-coder.github.io/example_os/docs/)
 
 This OS is a hard fork of my private OS that I'm also working on. No more features will be added to this OS as it is for reference purposes only.  
 Huge thanks to [Phil-opp](https://os.phil-opp.com) and the [OSDev wiki](https://wiki.osdev.org)
 
 ## License
-Everything in this repository is under the MIT license, excluding the docs folder, 
-(which contains the project website). The textual content and assets I post there is copyrighted
-but not the site theme (which can be found here: [Hacker theme](https://pages-themes.github.io/hacker/))
+Everything in this repository is under the MIT license, excluding the assets and tutorials folder, (which contains data for the project website). 
 
 ## Features
 - Preemptive Multitasking (including system calls)
