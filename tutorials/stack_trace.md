@@ -128,4 +128,4 @@ map these numbers to the assembly code of your kernel. Later on, we'll be able
 to load the kernel symbol table and then print out function names. exampleOS's
 stack trace implementation does this.
 
-[Back to the root](../docs/index.md)
+[Back to the root](https://techno-coder.github.io/example_os/)
