@@ -51,7 +51,7 @@ This is what the stack looks like when a function is called:
 
 From the diagram, we can see that the return address is always above the
 address stored in `rbp`. So, in order to find the last function's
-return address, we just minus 8 (because registers have a size of 8 bytes in 
+return address, we just add 8 (because registers have a size of 8 bytes in 
 long mode) from the address stored in `rbp`.
 
 ## Enabling frame pointers
@@ -75,7 +75,9 @@ Then, to get the return address, we increment the pointer and dereference it:
 let return_address = unsafe { *(base_pointer.offset(1)) } as usize;
 println!("Call site: {}", return_address);
 ```
-Note that in Rust, dereferencing a raw pointer is considered unsafe.  
+We increment by 1 because `offset` is based on the size of the data type (`usize`, 
+which has a size of 8 bytes) not the number of bytes. Note that in Rust, dereferencing 
+a raw pointer is considered unsafe.  
 
 Finally, we need to "walk the stack" and get the return addresses of all
 the previous stack frames. To do this, we set the current
@@ -95,11 +97,11 @@ loop {
 ```
 
 ### Isn't this an infinite loop?
-That's right, this loop is going to continue forever, until it hits an
-invalid memory address. This is because we don't know when the stack ends.
-There's a simple solution to this: before we enter the kernel
-function, set the return address to zero, and then stop looping when
-reaching a return address that is equal to zero.
+That's right, this loop is going to continue forever, until it dereferences an
+invalid memory address (and makes the processor throw a fault). This is 
+because we don't know when the stack ends. There's a simple solution to this: 
+before we enter the kernel function, set the return address to zero, and then 
+stop looping when reaching a return address that is equal to zero.
 
 Here's the relevant file in exampleOS: [boot_entry.asm](https://github.com/Techno-coder/example_os/blob/15a208f51768b3765154d59225f4a6427a22d0ce/kernel/assembly/boot_entry.asm#L72),
 specifically, these two lines:
