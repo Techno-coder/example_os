@@ -1,4 +1,6 @@
 ---
+title: A stack trace for your OS
+description: Implementation details for creating a stack tracer
 tags: stack-trace frame-pointer debugging
 ---
 ## What?

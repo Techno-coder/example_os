@@ -1,4 +1,6 @@
 ---
+title: Entering user mode in long mode
+description: Implementation details on entering the user mode privilege level from long mode
 tags: user-mode descriptors global-descriptor-table interrupts interrupt-stack-frame
 ---
 Note: This post does not discuss context switching, but the actual
