@@ -43,8 +43,8 @@ When the interrupt is fired, the kernel will perform a context switch.
 
 The code for configuring the PIT will not be discussed here but is very simple. See exampleOS's
 implementation [here](https://github.com/Techno-coder/example_os/blob/0738b93a285f457757ba9a0329929c4b69752c85/kernel/src/interrupts/pit_functions.rs#L12).
-Keep in mind that you will need to unmask the timer interrupt on the Programmable Interrupt Controller (or PIC for short):
-[Relevant code](https://github.com/Techno-coder/example_os/blob/0738b93a285f457757ba9a0329929c4b69752c85/kernel/src/interrupts/pic_functions.rs#L44).
+Keep in mind that you will need to [unmask the timer interrupt](https://github.com/Techno-coder/example_os/blob/0738b93a285f457757ba9a0329929c4b69752c85/kernel/src/interrupts/pic_functions.rs#L44)
+on the Programmable Interrupt Controller (or PIC for short).
 
 Once that is all done, create a timer handler function and set it to the appropriate
 interrupt vector. The vector is the first vector of the master PIC vector base 
@@ -79,7 +79,7 @@ with the `call` instruction like so:
 ```rust
 asm!("call $0" :: "i"(FUNCTION_NAME as extern "C" fn()) : /* clobbers */ : "intel");
 ```
-Inline assume arguments are referenced with a `$` and the index of the argument following
+Inline assembly arguments are referred to with a `$` and the index of the argument following
 it. The `"i"` indicates that the argument is a constant so it can be replaced
 by the function address at compile time.
 
