@@ -1,6 +1,7 @@
 title: exampleOS
 description: exampleOS is an OS for reference purposes
 url: https://techno-coder.github.io/example_os/
+baseurl: /example_os
 google_analytics: UA-120286070-1
 theme: jekyll-theme-hacker
 plugins:

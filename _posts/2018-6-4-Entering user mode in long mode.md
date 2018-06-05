@@ -44,7 +44,7 @@ When an interrupt is received by the processor, two important things happen.
 The data that is saved is called the Interrupt or Exception Stack Frame.
 Here's what it looks like:
 
-<img src="/assets/user_mode/exception_frame.png" style="width: 300px;">
+<img src="{{site.baseurl}}/assets/user_mode/exception_frame.png" style="width: 300px;">
 
 The two important elements here are the stack and code segment. If their descriptors'
 privilege level is Ring 3 then the processor thinks that we were in Ring 3
