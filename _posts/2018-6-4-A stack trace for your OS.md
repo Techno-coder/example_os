@@ -104,21 +104,17 @@ loop {
 That's right, this loop is going to continue forever, until it dereferences an
 invalid memory address (and makes the processor throw a fault). This is 
 because we don't know when the stack ends. There's a simple solution to this: 
-before we enter the kernel function, set the return address to zero, and then 
-stop looping when reaching a return address that is equal to zero.
+before we enter the kernel function, set the base pointer to zero, and then 
+stop looping when reaching a base pointer that is equal to zero.
 
 Here's the relevant file in exampleOS: [boot_entry.asm](https://github.com/Techno-coder/example_os/blob/15a208f51768b3765154d59225f4a6427a22d0ce/kernel/assembly/boot_entry.asm#L72),
-specifically, these two lines:
+specifically, this line:
 
 ```asm
 xor rbp, rbp
-push rbp
 ```
-
-We could shorten this down to just `push 0` but I believe this code makes the
-intent clearer.
-
-Now all we have to do is update our loop:
+Now when the `boot_entry` function is called, a value of 0 will be pushed
+onto the stack. All we have to do is update our loop:
 ```rust
 // ...
 while !base_pointer.is_null() {

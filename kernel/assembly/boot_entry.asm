@@ -72,7 +72,6 @@ start64_2:
 .create_null_frame:
 	; Set the base pointer to null
 	xor rbp, rbp
-    push rbp
 .entry:
 	; Enter rust code
     call boot_entry
