@@ -30,11 +30,13 @@ impl GlobalFrameAllocator {
 	pub fn convert(&mut self, free_areas: ::alloc::Vec<::memory::MemoryArea>) {
 		use core::mem::replace;
 		use self::GlobalFrameAllocator::*;
-		if let Boot(allocator) = self {
-			replace(self, GlobalFrameAllocator::PostBoot(allocator.convert(free_areas)));
+		let conversion;
+		if let Boot(ref mut allocator) = self {
+			conversion = GlobalFrameAllocator::PostBoot(allocator.convert(free_areas));
 		} else {
 			panic!("Cannot convert current allocator variant");
 		}
+		replace(self, conversion);
 	}
 }
 

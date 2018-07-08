@@ -2,7 +2,6 @@
 #![feature(const_fn)]
 #![feature(asm)]
 #![feature(abi_x86_interrupt)]
-#![feature(global_allocator)]
 #![feature(alloc)]
 #![feature(box_syntax)]
 #![no_std]
@@ -92,16 +91,13 @@ pub extern "C" fn boot_entry(boot_information: usize) -> ! {
 #[no_mangle]
 pub extern fn eh_personality() {}
 
-#[lang = "panic_fmt"]
+#[lang = "panic_impl"]
 #[cfg(not(test))]
 #[no_mangle]
-pub extern fn panic_fmt(fmt: ::core::fmt::Arguments, file: &'static str, line: u32, column: u32) -> ! {
-	eprintln!("\nKernel Panic in");
-	eprintln!("    {}", file);
-	eprintln!("at line {} column {}", line, column);
-	eprintln!("    {}", fmt);
+pub extern fn kernel_panic(panic_information: &::core::panic::PanicInfo) -> ! {
+	eprintln!("\nKernel {}", panic_information);
 	::debug::stack_trace();
-	loop { unsafe { ::x86_64::instructions::halt(); } }
+	loop { unsafe { asm!("hlt") } };
 }
 
 #[lang = "oom"]
